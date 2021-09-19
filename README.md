@@ -1,4 +1,5 @@
 # Electron Starter Template with p5js
+Simple startup template for Electron with p5js.
 
 ## Start 
 1. npm install electron
