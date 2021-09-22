@@ -11,3 +11,7 @@ function draw() {
     text("hello p5js and electron", width / 2, height / 2);
     circle(mouseX, mouseY, 20);
 }
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+}
