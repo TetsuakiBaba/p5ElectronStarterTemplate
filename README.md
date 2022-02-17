@@ -1,5 +1,5 @@
 # Electron Starter Template with p5js
-Simple startup template for Electron with p5js.
+Simple startup template for Electron with p5js and Web Serial API.
 
 ![](./teaser.png)
 ## Install 
@@ -19,3 +19,4 @@ Simple startup template for Electron with p5js.
 ## Dependencies (npm)
  * electron
  * electron-builder
+ * p5.js

@@ -4,27 +4,70 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 
-function createWindow() {
+app.commandLine.appendSwitch('enable-features', 'ElectronSerialChooser')
+
+async function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      enableBlinkFeatures: 'Serial',
+      nodeIntegration: true
     }
   })
 
+
+
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  await mainWindow.loadFile('index.html')
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
+
+
+  mainWindow.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
+    event.preventDefault()
+    if (portList && portList.length > 0) {
+      callback(portList[0].portId)
+    } else {
+      callback('') //Could not find any matching devices
+    }
+  })
+
+  // mainWindow.webContents.session.on('serial-port-added', (event, port) => {
+  //   console.log('serial-port-added FIRED WITH', port)
+  // })
+
+  // mainWindow.webContents.session.on('serial-port-removed', (event, port) => {
+  //   console.log('serial-port-removed FIRED WITH', port)
+  // })
+
+  // mainWindow.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
+  //   if (permission === 'serial' && details.securityOrigin === 'file:///') {
+  //     return true
+  //   }
+  // })
+
+  // mainWindow.webContents.session.setDevicePermissionHandler((details) => {
+  //   if (details.deviceType === 'serial' && details.origin === 'file://') {
+  //     return true
+  //   }
+  // })
+
+  // Open Serial Port without user gesture.
+  // Reference: https://github.com/electron/electron/issues/27625
+  const portSelected = await mainWindow.webContents.executeJavaScript(
+    `navigator.serial.requestPort().then(port => port.toString()).catch(err => err.toString());`, true)
+  mainWindow.webContents.executeJavaScript(`beginSerial();`);
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+
   createWindow()
 
   app.on('activate', function () {
