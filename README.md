@@ -20,3 +20,4 @@ Simple startup template for Electron with p5js and Web Serial API.
  * electron
  * electron-builder
  * p5.js
+ * web serial API
